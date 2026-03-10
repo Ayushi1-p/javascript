@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Primitives vs Objects — Interactive Lab</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- CSS FILE -->
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<header>
+  <div class="badge">Interview Prep Lab</div>
+  <h1><span class="p">Primitives</span> vs <span class="o">Objects</span></h1>
+  <p class="subtitle">JavaScript memory model — interactive playground</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('basics')">01 · Basics</button>
+  <button class="tab" onclick="showTab('memory')">02 · Memory</button>
+  <button class="tab" onclick="showTab('copy')">03 · Copy Behavior</button>
+  <button class="tab" onclick="showTab('mutation')">04 · Mutation</button>
+  <button class="tab" onclick="showTab('typeof')">05 · typeof</button>
+  <button class="tab" onclick="showTab('quiz')">06 · Quiz</button>
+</div>
+
+<!-- TAB 1: BASICS -->
+<div class="content">
+<div id="tab-basics" class="section active">
+
+  <div class="grid-2">
+    <div class="card prim">
+      <div class="card-title p">Primitives — 7 types</div>
+      <p style="font-size:14px; color:var(--muted); margin-bottom:14px;">Simple, single values. Stored directly in memory.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;">
+        <span class="tag tag-prim">string</span>
+        <span class="tag tag-prim">number</span>
+        <span class="tag tag-prim">boolean</span>
+        <span class="tag tag-prim">undefined</span>
+        <span class="tag tag-prim">null</span>
+        <span class="tag tag-prim">bigint</span>
+        <span class="tag tag-prim">symbol</span>
+      </div>
+      <pre><span class="kw">let</span> name = <span class="str">"Ayushi"</span>;   <span class="cmt">// string</span>
+<span class="kw">let</span> age  = <span class="num">22</span>;        <span class="cmt">// number</span>
+<span class="kw">let</span> isOn = <span class="bool">true</span>;      <span class="cmt">// boolean</span>
+<span class="kw">let</span> x;               <span class="cmt">// undefined</span>
+<span class="kw">let</span> empty = <span class="bool">null</span>;    <span class="cmt">// null</span></pre>
+    </div>
+
+    <div class="card obj">
+      <div class="card-title o">Objects — reference types</div>
+      <p style="font-size:14px; color:var(--muted); margin-bottom:14px;">Complex values. Stored as a reference (pointer) in memory.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;">
+        <span class="tag tag-obj">object {}</span>
+        <span class="tag tag-obj">array []</span>
+        <span class="tag tag-obj">function</span>
+        <span class="tag tag-obj">Date</span>
+        <span class="tag tag-obj">RegExp</span>
+      </div>
+      <pre><span class="kw">let</span> user = {
+  name: <span class="str">"Ayushi"</span>,
+  age: <span class="num">22</span>
+};
+<span class="kw">let</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">let</span> greet = <span class="fn">function</span>() {};</pre>
+    </div>
+  </div>
+
+  <div class="card both">
+    <div class="card-title y">The KEY difference — how they're stored</div>
+    <div class="grid-2">
+      <div>
+        <h3 style="color:var(--prim)">Primitives → stored by VALUE</h3>
+        <p style="font-size:14px;">The actual value sits directly in the variable's memory slot.</p>
+        <div class="explainer">Think of it like writing a number on a sticky note. The note IS the value.</div>
+      </div>
+      <div>
+        <h3 style="color:var(--obj)">Objects → stored by REFERENCE</h3>
+        <p style="font-size:14px;">The variable stores an address pointing to where the object lives.</p>
+        <div class="explainer">Think of it like writing a home address on a sticky note. The note points to the house, it IS NOT the house.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 2: MEMORY -->
+<div id="tab-memory" class="section">
+  <div class="card both">
+    <div class="card-title y">Memory Visualizer — click to add variables</div>
+    <p style="font-size:14px; color:var(--muted)">See exactly how JS stores primitives vs objects in memory.</p>
+
+   <div style="display:flex; flex-wrap:wrap; gap:8px; margin:16px 0;">
+
+<button class="btn btn-prim"
+onclick="addMemory('let name = Ayushi', 'string', 'Ayushi', 'Stack', '0x001')">
++ let name = "Ayushi"
+</button>
+
+<button class="btn btn-prim"
+onclick="addMemory('let age = 22', 'number', '22', 'Stack', '0x002')">
++ let age = 22
+</button>
+
+<button class="btn btn-prim"
+onclick="addMemory('let active = true','boolean','true','Stack','0x003')">
++ let active = true
+</button>
+
+<button class="btn btn-obj"
+onclick="addMemory('let user = {...}','object','Heap @0xA1','Stack','0x004')">
++ let user = {...}
+</button>
+
+<button class="btn btn-obj"
+onclick="addMemory('let nums = [1,2,3]','array','Heap @0xB2','Stack','0x005')">
++ let nums = [...]
+</button>
+
+<button class="btn btn-obj"
+onclick="addMemory('let fn = function(){}','function','Heap @0xC3','Stack','0x006')">
++ let fn = function
+</button>
+
+<button class="btn"
+style="color:var(--muted);border-color:var(--border)"
+onclick="clearMemory()">
+Clear
+</button>
+
+</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="memory-box" id="stack-box">
+          <div class="memory-header">📦 STACK (fast, small)</div>
+          <div id="stack-rows"><div style="padding:16px;font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center">click buttons above →</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="memory-box" id="heap-box">
+          <div class="memory-header">🏠 HEAP (large, flexible)</div>
+          <div id="heap-rows"><div style="padding:16px;font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center">object data lives here</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explainer" style="margin-top:16px;">
+      <strong style="color:var(--prim)">Primitives</strong> → stored directly on the Stack. Fast access. Fixed size.<br>
+      <strong style="color:var(--obj)">Objects</strong> → stored on the Heap. Stack holds only a <em>reference</em> (memory address) to the Heap location.
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: COPY BEHAVIOR -->
+<div id="tab-copy" class="section">
+
+  <div class="card prim">
+    <div class="card-title p">Primitives — Copied by VALUE</div>
+    <p>When you copy a primitive, you get a <span class="highlight">completely new independent copy</span>. Changing one does NOT affect the other.</p>
+    <pre><span class="kw">let</span> a = <span class="num">10</span>;
+<span class="kw">let</span> b = a;     <span class="cmt">// b gets a COPY of the value 10</span>
+
+b = <span class="num">99</span>;       <span class="cmt">// only b changes</span>
+
+console.log(a); <span class="cmt">// 10 ← untouched!</span>
+console.log(b); <span class="cmt">// 99</span></pre>
+
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO — Click to run step by step</div>
+      <button class="btn btn-prim" onclick="runPrimCopy()">▶ Run Primitive Copy</button>
+      <div class="output" id="prim-copy-out">Output will appear here...</div>
+    </div>
+  </div>
+
+  <div class="card obj">
+    <div class="card-title o">Objects — Copied by REFERENCE</div>
+    <p>When you copy an object, you copy the <span class="highlight">reference (address)</span>, not the data. Both variables point to the SAME object in memory!</p>
+    <pre><span class="kw">let</span> user1 = { name: <span class="str">"Ayushi"</span> };
+<span class="kw">let</span> user2 = user1;   <span class="cmt">// user2 points to SAME object</span>
+
+user2.name = <span class="str">"Priya"</span>;  <span class="cmt">// modifies the shared object</span>
+
+console.log(user1.name); <span class="cmt">// "Priya" ← user1 changed too! 😱</span>
+console.log(user2.name); <span class="cmt">// "Priya"</span></pre>
+
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO</div>
+      <button class="btn btn-obj" onclick="runObjCopy()">▶ Run Object Copy</button>
+      <div class="output" id="obj-copy-out">Output will appear here...</div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title g">How to make a TRUE copy of an object</div>
+    <p>Use spread operator or <code style="color:var(--prim)">Object.assign()</code> for shallow copy, or <code style="color:var(--prim)">JSON.parse(JSON.stringify())</code> for deep copy.</p>
+    <pre><span class="cmt">// Shallow copy (1 level deep)</span>
+<span class="kw">let</span> original = { name: <span class="str">"Ayushi"</span>, age: <span class="num">22</span> };
+<span class="kw">let</span> copy = { ...original };   <span class="cmt">// spread operator</span>
+
+copy.name = <span class="str">"Priya"</span>;
+console.log(original.name);  <span class="cmt">// "Ayushi" ← safe now ✅</span>
+
+<span class="cmt">// Deep copy (nested objects too)</span>
+<span class="kw">let</span> deepCopy = JSON.parse(JSON.stringify(original));</pre>
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO</div>
+      <button class="btn btn-green" onclick="runTrueCopy()">▶ Run True Copy</button>
+      <div class="output" id="true-copy-out">Output will appear here...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 4: MUTATION -->
+<div id="tab-mutation" class="section">
+
+  <div class="card obj">
+    <div class="card-title o">const does NOT mean immutable for objects!</div>
+    <p>This is a very common interview trap. <code style="color:var(--obj)">const</code> just means the <span class="highlight">reference can't change</span> — but the object's contents CAN be mutated.</p>
+    <pre><span class="kw">const</span> user = { name: <span class="str">"Ayushi"</span> };
+
+<span class="cmt">// ✅ This WORKS — mutating the object</span>
+user.name = <span class="str">"Priya"</span>;
+user.age = <span class="num">22</span>;
+
+<span class="cmt">// ❌ This FAILS — reassigning the variable</span>
+user = { name: <span class="str">"Someone else"</span> }; <span class="cmt">// TypeError!</span></pre>
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO</div>
+      <button class="btn btn-obj" onclick="runConstDemo()">▶ Run const Demo</button>
+      <div class="output" id="const-out">Output will appear here...</div>
+    </div>
+  </div>
+
+  <div class="card both">
+    <div class="card-title y">Comparing primitives vs objects</div>
+    <pre><span class="cmt">// Primitives — compared by VALUE</span>
+<span class="num">5</span> === <span class="num">5</span>               <span class="cmt">// true ✅</span>
+<span class="str">"hi"</span> === <span class="str">"hi"</span>          <span class="cmt">// true ✅</span>
+
+<span class="cmt">// Objects — compared by REFERENCE</span>
+{} === {}               <span class="cmt">// false ❌ (different objects in memory!)</span>
+[] === []               <span class="cmt">// false ❌</span>
+
+<span class="kw">const</span> a = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>];
+<span class="kw">const</span> b = a;
+a === b                 <span class="cmt">// true ✅ (same reference)</span></pre>
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO</div>
+      <button class="btn btn-prim" onclick="runCompare()">▶ Run Comparisons</button>
+      <div class="output" id="compare-out">Output will appear here...</div>
+    </div>
+  </div>
+
+  <div class="card prim">
+    <div class="card-title p">Primitives are immutable</div>
+    <p>You can't change a primitive value — you can only replace it with a new one.</p>
+    <pre><span class="kw">let</span> str = <span class="str">"hello"</span>;
+str[<span class="num">0</span>] = <span class="str">"H"</span>;         <span class="cmt">// silently fails!</span>
+console.log(str);       <span class="cmt">// still "hello"</span>
+
+<span class="cmt">// To "change" it, replace the whole value:</span>
+str = <span class="str">"Hello"</span>;         <span class="cmt">// new string created, old one discarded</span></pre>
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO</div>
+      <button class="btn btn-prim" onclick="runImmutable()">▶ Run Immutability Demo</button>
+      <div class="output" id="immutable-out">Output will appear here...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 5: TYPEOF -->
+<div id="tab-typeof" class="section">
+
+  <div class="card both">
+    <div class="card-title y">typeof — check any value live</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Type any JS expression in the box to see what <code style="color:var(--prim)">typeof</code> returns.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <input id="typeof-input" type="text" value="&quot;hello&quot;" style="flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;" placeholder='try: 42, "hi", true, null, [], {}' />
+      <button class="btn btn-prim" onclick="runTypeof()">Check typeof</button>
+    </div>
+    <div class="output" id="typeof-out" style="margin-top:12px;">Type something and click Check →</div>
+  </div>
+
+  <div class="card prim">
+    <div class="card-title p">Quick Reference — typeof results</div>
+    <pre><span class="kw">typeof</span> <span class="str">"Ayushi"</span>    <span class="cmt">// "string"</span>
+<span class="kw">typeof</span> <span class="num">42</span>          <span class="cmt">// "number"</span>
+<span class="kw">typeof</span> <span class="bool">true</span>        <span class="cmt">// "boolean"</span>
+<span class="kw">typeof</span> <span class="bool">undefined</span>   <span class="cmt">// "undefined"</span>
+<span class="kw">typeof</span> <span class="fn">Symbol</span>()    <span class="cmt">// "symbol"</span>
+<span class="kw">typeof</span> <span class="num">9007n</span>       <span class="cmt">// "bigint"</span>
+
+<span class="cmt">// ⚠️ TRICK QUESTIONS — common in interviews!</span>
+<span class="kw">typeof</span> <span class="bool">null</span>        <span class="cmt">// "object" ← BUG in JS! null is NOT an object</span>
+<span class="kw">typeof</span> []           <span class="cmt">// "object" ← arrays are objects</span>
+<span class="kw">typeof</span> {}           <span class="cmt">// "object"</span>
+<span class="kw">typeof</span> <span class="kw">function</span>(){} <span class="cmt">// "function" ← special case</span></pre>
+  </div>
+
+  <div class="card obj">
+    <div class="card-title o">How to properly check if something is an Array</div>
+    <p>Since <code style="color:var(--prim)">typeof []</code> returns "object", you need a different approach:</p>
+    <pre><span class="kw">const</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+
+Array.isArray(nums);           <span class="cmt">// true ✅ (best way)</span>
+nums <span class="kw">instanceof</span> Array;        <span class="cmt">// true ✅</span>
+<span class="kw">typeof</span> nums === <span class="str">"object"</span>;      <span class="cmt">// true ❌ (can't tell it's array)</span>
+
+<span class="cmt">// Check for null specifically:</span>
+<span class="kw">const</span> val = <span class="bool">null</span>;
+val === <span class="bool">null</span>;                 <span class="cmt">// true ✅ (only way to check null)</span></pre>
+    <div class="demo-area">
+      <div class="demo-label">LIVE DEMO</div>
+      <button class="btn btn-obj" onclick="runArrayCheck()">▶ Run Array Checks</button>
+      <div class="output" id="array-check-out">Output will appear here...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB 6: QUIZ -->
+<div id="tab-quiz" class="section">
+  <div class="card both">
+    <div class="card-title y">Interview Quiz — 8 Questions</div>
+    <div class="progress"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="quiz-score" id="quiz-score-top">Question 1 of 8</div>
+    <br>
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<script src="script.js"></script>
+</body>
+</html>
